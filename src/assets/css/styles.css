@@ -1,0 +1,82 @@
+body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* background-color: #614e69; */
+    /* background: radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%); */
+    /* background: linear-gradient(to bottom, #b5bdc8 0%,#828c95 36%,#28343b 100%); */
+    background: radial-gradient(ellipse at center, #b5bdc8 0%,#828c95 36%,#28343b 100%);
+}
+
+h1{
+    color: #fff;
+    text-align: center;
+}
+
+.checkbox {
+    color: #fff;
+    font-size: 12;
+    text-align: center;
+}
+
+.gui {
+    margin-top: 10px;
+    font-size: 20px;
+    text-align: center;
+    span {
+        color: white;
+        font-weight: bolder;
+    }
+}
+
+.gui_turn {
+    text-transform: uppercase;
+}
+
+.board__column {
+    display: flex;
+    margin-bottom: 1px;
+}
+
+.board__cell {
+    position: relative;
+    /* background-color: #6c6c6c; */
+    background: linear-gradient(to bottom, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+    color: #fff;
+    height: 90px;
+    width: 90px;
+    margin: 2px;
+    font-size: 40px;
+    line-height: 80px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.btn {
+    /* background-color: #6c6c6c; */
+    background: linear-gradient(to bottom, rgba(69,72,77,1) 0%,rgba(0,0,0,1) 100%);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    line-height: 60px;
+    text-align: center;
+    border-radius: 25px;
+    margin-left: 1px;
+    margin-bottom: 2px;
+    margin-top: 5px;
+    width: 99%;
+}
+
+/* Gradiente com mais nuances */
+.wood-gradient {
+    background: linear-gradient(135deg, 
+        #8B4513 0%,   /* SaddleBrown */
+        #A0522D 20%,  /* Sienna */
+        #CD853F 40%,  /* Peru */
+        #D2691E 60%,  /* Chocolate */
+        #F4A460 80%,  /* SandyBrown */
+        #DEB887 100%  /* BurlyWood */
+    );
+}

@@ -2,7 +2,7 @@
 
 Esta é uma aplicação simples de jogo da velha desenvolvida utilizando HTML, CSS e JavaScript.
 
-<img src="/assets/img/todo-list.png">
+<img src="/assets/img/screen.png">
 
 ## Funcionalidades
 

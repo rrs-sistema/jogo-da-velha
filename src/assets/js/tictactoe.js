@@ -49,13 +49,15 @@ const JogoVelha = () => {
                 self.vez = winner;
                 self.texto = mensagens[2];
                 podeJogar = false;
+                const mensagem = document.getElementById('mensagem');
+                mensagem.className = "efeitoVenceu";
             }
         }
 
-        if (!venceu && self.robo && total > 8) {
+        if (!venceu && total > 8) {
             self.texto = mensagens[3];
             self.vez = '';
-            //podeJogar = false;
+            mensagem.className = "efeitoVenceu";
             return false;
         }
 
@@ -97,6 +99,8 @@ const JogoVelha = () => {
         for (let i = 0; i < cells.length; i++) {
             cells[i].innerText = '';
         }
+        const mensagem = document.getElementById('mensagem');
+        mensagem.className = 'none';
         self.bottonLabel = 'Reiniciar';
     }
 
@@ -108,7 +112,7 @@ const JogoVelha = () => {
             </p>
             <div>
                 <div class="gui">
-                    <span>{{self.texto}}</span>
+                    <span id="mensagem">{{self.texto}}</span>
                     <span class="gui_turn">{{self.vez}}</span>
                 </div>
                 <div class="quadro" @ready="self.init(this)">

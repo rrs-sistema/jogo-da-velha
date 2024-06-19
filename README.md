@@ -2,7 +2,7 @@
 
 Esta é uma aplicação simples de jogo da velha desenvolvida utilizando HTML, CSS e JavaScript.
 
-<img src="/assets/img/screen.png">
+<img src="./assets/img/screen.png">
 
 ## Funcionalidades
 
@@ -15,7 +15,7 @@ Esta é uma aplicação simples de jogo da velha desenvolvida utilizando HTML, C
 1. Clone o repositório:
 
 ```bash/cmd ```
-git clone https://github.com/rrs-sistema/unicesumar_front_end.git
+git clone https://github.com/rrs-sistema/jogo-da-velha.git
 
 Abra o arquivo index.html no seu navegador web.
 

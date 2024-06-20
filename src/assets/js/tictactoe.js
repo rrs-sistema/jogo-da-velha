@@ -1,3 +1,22 @@
+class Jogador {
+    constructor(nome, simbolo) {
+        this.nome = nome;
+        this.simbolo = simbolo;
+    }
+}
+
+class Self {
+    constructor(robo, simbolo, texto, bottonLabel, jogador1, jogador2, nomeJogadorAtual) {
+        this.robo = robo;
+        this.simbolo = simbolo;
+        this.texto = texto;
+        this.bottonLabel = bottonLabel;
+        this.jogador1 = jogador1;
+        this.jogador2 = jogador2;
+        this.nomeJogadorAtual = nomeJogadorAtual;
+    }
+}
+
 const JogoVelha = () => {
     let total = 0;
     let venceu = false;
@@ -7,16 +26,13 @@ const JogoVelha = () => {
 
     const mensagens = [
         'Aperte jogar para iniciar',
-        'Agora é a vez de:',
+        'Agora é sua vez',
         'Venceu o jogo',
         'Jogo empatado'
     ]
-    const self = {
-        robo: true,
-        vez: '',
-        texto: mensagens[0],
-        bottonLabel: 'Jogar'
-    };
+
+    const self = new Self(true, '', mensagens[0], 'Jogar', null, null, null);
+
 
     const checkMatching = (val1, val2, val3) => {
         if (jogadas[val1] === jogadas[val2] && jogadas[val2] === jogadas[val3]) {
@@ -25,38 +41,47 @@ const JogoVelha = () => {
     }
 
     const clickedBox = (elemento) => {
+        let winner = false;
+
         if (elemento) {
             total++;
             const id = elemento.getAttribute('data-id');
             if (!podeJogar || jogadas[id]) {// Verifica se o jogador pode jogar ou se a celular já foi preenchida
                 return false;
             }
-            elemento.innerText = self.vez;
-            jogadas[id] = self.vez;
+            elemento.innerText = self.simbolo;
+            jogadas[id] = self.simbolo;
 
-            if (self.vez === 'x') {
-                self.vez = 'o';
-            } else {
-                self.vez = 'x';
-            }
+
             // Verifica todas as opções do jogador ganhar a partida
-            const winner = (checkMatching(1, 2, 3) || checkMatching(4, 5, 6) || checkMatching(7, 8, 9) ||
+            winner = (checkMatching(1, 2, 3) || checkMatching(4, 5, 6) || checkMatching(7, 8, 9) ||
                 checkMatching(1, 4, 7) || checkMatching(2, 5, 8) || checkMatching(3, 6, 9) ||
                 checkMatching(1, 5, 9) || checkMatching(3, 5, 7));
+
             if (winner) {
                 total = 0;
                 venceu = true;
-                self.vez = winner;
+                self.simbolo = winner;
                 self.texto = mensagens[2];
                 podeJogar = false;
                 const mensagem = document.getElementById('mensagem');
                 mensagem.className = "efeitoVenceu";
+            } else {
+                if (self.simbolo === 'x') {
+                    self.simbolo = 'o';
+                    self.nomeJogadorAtual = self.jogador2.nome + ' - ';
+                } else {
+                    self.simbolo = 'x';
+                    self.nomeJogadorAtual = self.jogador1.nome + ' - ';
+                }
             }
         }
 
         if (!venceu && total > 8) {
+            const mensagem = document.getElementById('mensagem');
+            self.nomeJogadorAtual = '';
             self.texto = mensagens[3];
-            self.vez = '';
+            self.simbolo = '';
             mensagem.className = "efeitoVenceu";
             return false;
         }
@@ -89,10 +114,17 @@ const JogoVelha = () => {
     }
 
     const play = () => {
+
+        let jogador1 = new Jogador('Kamilly', 'x');
+        let jogador2 = new Jogador(self.robo ? 'Máquina' : 'Roberto', 'o');
+
         total = 0;
         podeJogar = true;
         venceu = false;
-        self.vez = 'x';
+        self.jogador1 = jogador1;
+        self.jogador2 = jogador2;
+        self.simbolo = jogador1.simbolo;
+        self.nomeJogadorAtual = jogador1.nome + ' - ';
         self.texto = mensagens[1];
         jogadas = [];
         const cells = quadro.querySelectorAll('span');
@@ -104,6 +136,7 @@ const JogoVelha = () => {
         self.bottonLabel = 'Reiniciar';
     }
 
+
     const template = `
         <div>
             <h1>Jogo da velha</h1>
@@ -112,8 +145,7 @@ const JogoVelha = () => {
             </p>
             <div>
                 <div class="gui">
-                    <span id="mensagem">{{self.texto}}</span>
-                    <span class="gui_turn">{{self.vez}}</span>
+                    <span id="mensagem">{{self.nomeJogadorAtual}} {{self.texto}}</span>
                 </div>
                 <div class="quadro" @ready="self.init(this)">
                     <section class="board__column">

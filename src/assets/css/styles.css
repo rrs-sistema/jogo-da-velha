@@ -28,7 +28,7 @@ h1{
 }
 
 .gui_turn {
-    text-transform: uppercase;
+    text-transform: capitalize;
 }
 
 .board__column {
@@ -69,6 +69,7 @@ h1{
 
 /* Gradiente com mais nuances */
 .wood-gradient {
+    border-radius: 25px;
     background: linear-gradient(135deg, 
         #8B4513 0%,   /* SaddleBrown */
         #A0522D 20%,  /* Sienna */

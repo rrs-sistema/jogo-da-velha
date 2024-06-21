@@ -1,4 +1,8 @@
-class Jogador {
+const localStorage = window.localStorage;
+let gameWinnersList = localStorage.getItem('gameWinnersList') ? JSON.parse(localStorage.getItem('gameWinnersList')) : [];
+localStorage.setItem('gameWinnersList', JSON.stringify(gameWinnersList));
+
+class Player {
     constructor(nome, simbolo) {
         this.nome = nome;
         this.simbolo = simbolo;
@@ -26,6 +30,82 @@ class InforPlay {
     }
 }
 
+class WinningPlayer {
+    constructor(id, nome, total) {
+        this.id = id;
+        this.nome = nome;
+        this.total = total;
+    }
+}
+
+window.onload = function () {
+    criaTable();
+};
+
+function criaTable() {
+    const parent = document.getElementById("tableGameWinners");
+    while (parent.firstChild) {
+        parent.firstChild.remove()
+    }
+
+    var row = document.createElement("tr");
+    row.style = 'background-color: #0F2028;';
+
+    var thRA = document.createElement("th");
+    thRA.innerHTML = 'Nome';
+    thRA.style = 'width: 200px; text-align: center; color: #FFFFFF;';
+    row.append(thRA);
+
+    var thStatus = document.createElement("th");
+    thStatus.innerHTML = 'Total';
+    thStatus.style = 'width: 100px; text-align: center; color: #FFFFFF;';
+    row.append(thStatus);
+
+    const tableNotaSemestre = document.getElementById("tableGameWinners");
+    tableNotaSemestre.insertBefore(row, tableNotaSemestre.childNodes[0]);// Adiciona a linha na posição zero(0) tabela
+    const notasLocalStorage = JSON.parse(localStorage.getItem('gameWinnersList'));
+
+    notasLocalStorage.sort((a, b) => parseFloat(b.total) - parseFloat(a.total));
+    notasLocalStorage.forEach(item => {
+        criarElemento(item);
+    });
+
+    var linhasTabela = document.getElementsByTagName("tr");
+    for (var i = 0; i < linhasTabela.length; i++) {
+        if (i == 0) {
+            continue;
+        }
+        else if ((i) % 2 == 0) {
+            linhasTabela[i].className = "styleOne";
+        }
+        else {
+            linhasTabela[i].className = "styleTwo";
+        }
+    }
+}
+
+function criarElemento(obj) {
+
+    // Create two new cells
+    var cellTextoNome = document.createElement("td");
+    cellTextoNome.id = obj.id;
+    cellTextoNome.innerHTML = obj.nome;
+    cellTextoNome.style = 'text-align: center;';
+    // Create two new cells
+    var cellTextoTotal = document.createElement("td");
+    cellTextoTotal.id = obj.id;
+    cellTextoTotal.innerHTML = obj.total;
+    cellTextoTotal.style = 'text-align: center;';
+
+    var row = document.createElement("tr");
+    row.id = obj.id;
+    row.appendChild(cellTextoNome);
+    row.appendChild(cellTextoTotal);
+    const table = document.getElementById("tableGameWinners");
+    table.appendChild(row);// Adiciona a linha na tabela
+}
+
+
 const JogoVelha = () => {
 
     let inforPlay = new InforPlay(0, false, false, null, []);
@@ -38,6 +118,18 @@ const JogoVelha = () => {
     ]
 
     const self = new Self(true, '', mensagens[0], 'Jogar', null, []);
+
+    self.data = [
+        { title: 'PLAY ONE' },
+        { title: 'PLAY TWO' },
+        { title: 'PLAY THREE' },
+    ];
+
+    self.rows = [
+        { title: 'Google', description: 'The google search engine...' },
+        { title: 'Bing', description: 'The microsoft search engine...' },
+        { title: 'Duckduckgo', description: 'Privacy in the first place...' },
+    ];
 
     const checkMatching = (val1, val2, val3) => {
         if (inforPlay.jogadas[val1] === inforPlay.jogadas[val2] && inforPlay.jogadas[val2] === inforPlay.jogadas[val3]) {
@@ -71,6 +163,32 @@ const JogoVelha = () => {
                 inforPlay.podeJogar = false;
                 const mensagem = document.getElementById('mensagem');
                 mensagem.className = "efeitoVenceu"; // Aplica o efeito da mensagem piscando
+
+
+                let winningPlayer = gameWinnersList.find(o => o.nome.trim() === self.nomeJogadorAtual.trim());
+                const index = gameWinnersList.length;
+
+                let removeValFromIndex = [];
+
+                for (var i = 0; i < gameWinnersList.length; i++) {
+                    if (gameWinnersList[i].nome == self.nomeJogadorAtual) {
+                        removeValFromIndex.push(i);
+                    }
+                }
+
+                for (var i = removeValFromIndex.length - 1; i >= 0; i--)
+                    gameWinnersList.splice(removeValFromIndex[i], 1);
+
+                if (winningPlayer === null || winningPlayer === undefined) {
+                    const winningPlayer = new WinningPlayer(index, self.nomeJogadorAtual, 1);
+                    gameWinnersList.push(winningPlayer);
+                } else {
+                    winningPlayer.total = winningPlayer.total + 1;
+                    gameWinnersList.push(winningPlayer);
+                }
+                localStorage.setItem('gameWinnersList', JSON.stringify(gameWinnersList));
+                criaTable();
+
             } else {
                 if (self.simbolo === 'x') {
                     self.simbolo = 'o';
@@ -122,8 +240,8 @@ const JogoVelha = () => {
 
     const play = () => {
 
-        let jogador1 = new Jogador('Play One', 'x');
-        let jogador2 = new Jogador(self.robo ? 'Máquina' : 'Play Two', 'o');
+        let jogador1 = new Player('Play One', 'x');
+        let jogador2 = new Player(self.robo ? 'Máquina' : 'Play Two', 'o');
         self.jogadores.push(jogador1);
         self.jogadores.push(jogador2);
 
@@ -173,6 +291,7 @@ const JogoVelha = () => {
                 </div>
             </div>
         </div>
+
     `;
 
     return lemonade.element(template, self);

@@ -8,11 +8,20 @@
     </head>
     <body>
         <div id="root" class="wood-gradient"></div>
-
         <script src="https://lemonadejs.net/v1/lemonade.js"></script>
         <script src="./src/assets/js/tictactoe.js"></script>
         <script>
-        lemonade.render(JogoVelha, document.getElementById('root'));
-    </script>
+            lemonade.render(JogoVelha, document.getElementById('root'));
+        </script>
+
+        <div class="div_table">
+            <fieldset>
+                <legend style="color: white; font-weight: bolder;">Tabela de
+                    Rankings</legend>
+                <table id="tableGameWinners" style="width: 100%;">
+                </table>
+            </fieldset>
+
+        </div>
     </body>
 </html>

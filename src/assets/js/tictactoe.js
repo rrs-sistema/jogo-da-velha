@@ -6,23 +6,29 @@ class Jogador {
 }
 
 class Self {
-    constructor(robo, simbolo, texto, bottonLabel, jogador1, jogador2, nomeJogadorAtual) {
+    constructor(robo, simbolo, texto, bottonLabel, nomeJogadorAtual, jogadores) {
         this.robo = robo;
         this.simbolo = simbolo;
         this.texto = texto;
         this.bottonLabel = bottonLabel;
-        this.jogador1 = jogador1;
-        this.jogador2 = jogador2;
         this.nomeJogadorAtual = nomeJogadorAtual;
+        this.jogadores = jogadores;
+    }
+}
+
+class InforPlay {
+    constructor(total, venceu, podeJogar, quadro, jogadas) {
+        this.total = total;
+        this.venceu = venceu;
+        this.podeJogar = podeJogar;
+        this.quadro = quadro;
+        this.jogadas = jogadas;
     }
 }
 
 const JogoVelha = () => {
-    let total = 0;
-    let venceu = false;
-    let podeJogar = false;
-    let quadro;
-    let jogadas = [];
+
+    let inforPlay = new InforPlay(0, false, false, null, []);
 
     const mensagens = [
         'Aperte jogar para iniciar',
@@ -31,12 +37,11 @@ const JogoVelha = () => {
         'Jogo empatado'
     ]
 
-    const self = new Self(true, '', mensagens[0], 'Jogar', null, null, null);
-
+    const self = new Self(true, '', mensagens[0], 'Jogar', null, []);
 
     const checkMatching = (val1, val2, val3) => {
-        if (jogadas[val1] === jogadas[val2] && jogadas[val2] === jogadas[val3]) {
-            return jogadas[val1];
+        if (inforPlay.jogadas[val1] === inforPlay.jogadas[val2] && inforPlay.jogadas[val2] === inforPlay.jogadas[val3]) {
+            return inforPlay.jogadas[val1];
         }
     }
 
@@ -44,13 +49,13 @@ const JogoVelha = () => {
         let winner = false;
 
         if (elemento) {
-            total++;
+            inforPlay.total++;
             const id = elemento.getAttribute('data-id');
-            if (!podeJogar || jogadas[id]) {// Verifica se o jogador pode jogar ou se a celular já foi preenchida
+            if (!inforPlay.podeJogar || inforPlay.jogadas[id]) {// Verifica se o jogador pode jogar ou se a celular já foi preenchida
                 return false;
             }
             elemento.innerText = self.simbolo;
-            jogadas[id] = self.simbolo;
+            inforPlay.jogadas[id] = self.simbolo;
 
 
             // Verifica todas as opções do jogador ganhar a partida
@@ -59,25 +64,27 @@ const JogoVelha = () => {
                 checkMatching(1, 5, 9) || checkMatching(3, 5, 7));
 
             if (winner) {
-                total = 0;
-                venceu = true;
+                inforPlay.total = 0;
+                inforPlay.venceu = true;
                 self.simbolo = winner;
                 self.texto = mensagens[2];
-                podeJogar = false;
+                inforPlay.podeJogar = false;
                 const mensagem = document.getElementById('mensagem');
-                mensagem.className = "efeitoVenceu";
+                mensagem.className = "efeitoVenceu"; // Aplica o efeito da mensagem piscando
             } else {
                 if (self.simbolo === 'x') {
                     self.simbolo = 'o';
-                    self.nomeJogadorAtual = self.jogador2.nome + ' - ';
+                    let playCurrent = self.jogadores.find(o => o.simbolo.trim() === self.simbolo.trim());
+                    self.nomeJogadorAtual = playCurrent.nome + ' - ';
                 } else {
                     self.simbolo = 'x';
-                    self.nomeJogadorAtual = self.jogador1.nome + ' - ';
+                    let playCurrent = self.jogadores.find(o => o.simbolo.trim() === self.simbolo.trim());
+                    self.nomeJogadorAtual = playCurrent.nome + ' - ';
                 }
             }
         }
 
-        if (!venceu && total > 8) {
+        if (!inforPlay.venceu && inforPlay.total > 8) {
             const mensagem = document.getElementById('mensagem');
             self.nomeJogadorAtual = '';
             self.texto = mensagens[3];
@@ -90,12 +97,12 @@ const JogoVelha = () => {
     }
 
     self.init = (elemento) => {
-        quadro = elemento;
+        inforPlay.quadro = elemento;
         elemento.addEventListener('click', (e) => {
             switch (e.target.tagName) {
                 case 'SPAN':
                     if (clickedBox(e.target)) {
-                        if (self.robo && !venceu) {
+                        if (self.robo && !inforPlay.venceu) {
                             elemento.style.pointerEvents = 'none';
                             setTimeout(() => {
                                 const emptyTitles = elemento.querySelectorAll('span:empty');
@@ -115,19 +122,19 @@ const JogoVelha = () => {
 
     const play = () => {
 
-        let jogador1 = new Jogador('Kamilly', 'x');
-        let jogador2 = new Jogador(self.robo ? 'Máquina' : 'Roberto', 'o');
+        let jogador1 = new Jogador('Play One', 'x');
+        let jogador2 = new Jogador(self.robo ? 'Máquina' : 'Play Two', 'o');
+        self.jogadores.push(jogador1);
+        self.jogadores.push(jogador2);
 
-        total = 0;
-        podeJogar = true;
-        venceu = false;
-        self.jogador1 = jogador1;
-        self.jogador2 = jogador2;
+        inforPlay.total = 0;
+        inforPlay.podeJogar = true;
+        inforPlay.venceu = false;
         self.simbolo = jogador1.simbolo;
         self.nomeJogadorAtual = jogador1.nome + ' - ';
         self.texto = mensagens[1];
-        jogadas = [];
-        const cells = quadro.querySelectorAll('span');
+        inforPlay.jogadas = [];
+        const cells = inforPlay.quadro.querySelectorAll('span');
         for (let i = 0; i < cells.length; i++) {
             cells[i].innerText = '';
         }
@@ -135,7 +142,6 @@ const JogoVelha = () => {
         mensagem.className = 'none';
         self.bottonLabel = 'Reiniciar';
     }
-
 
     const template = `
         <div>
